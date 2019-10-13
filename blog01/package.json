@@ -1,0 +1,26 @@
+{
+  "name": "node-blog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/wwww.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env NODE_ENV=dev supervisor ./bin/www.js",
+    "start": "npm run dev",
+    "prd": "cross-env NODE_ENV=production supervisor ./bin/www.js"
+  },
+  "keywords": [],
+  "author": "BabyChin",
+  "license": "ISC",
+  "devDependencies": {
+    "cross-env": "^5.2.0",
+    "eslint": "^6.5.1"
+  },
+  "dependencies": {
+    "mysql": "^2.16.0",
+    "node": "^8.11.3",
+    "redis": "^2.8.0",
+    "supervisor": "^0.12.0",
+    "xss": "^1.0.3"
+  }
+}
