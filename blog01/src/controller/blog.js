@@ -2,89 +2,48 @@ const { exec } = require('../db/mysql')
 
 // 获取博客列表
 const getList = (author, keyword) => {
-  let sql = `select * from blogs where 1=1 `
+  let sql = `select * from blogs where isDel=0 `
   if (author) {
     sql += `and author='${author}' `
   }
   if (keyword) {
     sql += `and title like '%${keyword}%' `
   }
-  sql += `order by id desc;`
+  sql += `order by createTime desc;`
   return exec(sql)
-  
-  /* return [
-    {
-      id: 1,
-      title: '文章一',
-      content: '文章内容，哈哈哈，好开心。',
-      author: '刘武',
-      createTime: 1570962664888
-    },
-    {
-      id: 2,
-      title: '文章二',
-      content: '文章内容，哈哈哈，好开心。',
-      author: '张三',
-      createTime: 1570962664888
-    },
-    {
-      id: 3,
-      title: '文章三',
-      content: '文章内容，哈哈哈，好开心。',
-      author: '刘小二',
-      createTime: 1570962664888
-    }
-  ]; */
 };
 
 // 获取博客详情
-const getDetail = (id) => {
-  if (id) {
-    return {
-      id: 1,
-      title: '文章一',
-      content: '文章内容，哈哈哈，好开心。',
-      author: '刘武',
-      createTime: 1570962664888
-    };
-  } else {
-    return false;
-  }
+const getDetail = (id,isDel) => {
+  return exec(`select * from blogs where id=${id} and isDel=${isDel||0}`).then(rows => {
+    return rows[0]
+  })
 };
 
 // 新增博客
 const addBlog = (data) => {
-  if (data.title && data.content) {
-    return {
-      id: 1,
-      message: '新增博客成功'
-    };
-  } else {
-    return false;
-  }
+  let sql = `insert into blogs (title,content,author,createTime) values ('${data.title}','${data.content}','${data.author}',${Date.now()});`
+  return exec(sql).then(insertData => {
+    return { id: insertData.insertId }
+  })
 };
 
 // 修改博客
 const updateBlog = (data) => {
-  if (data.id && data.title && data.content) {
-    return {
-      id: 1,
-      message: '更新成功'
-    };
-  } else {
-    return false;
-  }
+  let sql = `update blogs set title='${data.title}',content='${data.content}',updateTime=${Date.now()} where id=${data.id};`
+  return exec(sql).then(updateData => {
+    return updateData.affectedRows > 0
+  })
 };
 
 // 删除博客
-const delBlog = (id) => {
-  if (id) {
-    return {
-      message: '删除成功'
-    };
-  } else {
-    return false;
-  }
+const delBlog = (id, author) => {
+  // 删除时需要加入author，确保数据安全性
+  // let sql = `delete blogs where id=${id} and author='${author}';`//硬删除
+  let sql = `update blogs set isDel=1 where id=${id} and author='${author}';`//软删除
+  return exec(sql).then(delData => {
+    return delData.affectedRows > 0
+  })
 };
 
 module.exports = {

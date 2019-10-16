@@ -62,5 +62,5 @@ const serverHandle = (req, res) => {
     res.write('404，不存在的接口');
     res.end();
   });
-};
+}
 module.exports = serverHandle;

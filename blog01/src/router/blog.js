@@ -16,38 +16,63 @@ const handleBlogRouter = (req, res) => {
     })
   }
   if (method === 'GET' && req.path === '/api/blog/detail') {
-    const resData = getDetail(id);
-    if (!resData) {
-      return new ErrorModel('id不能为空！');
-    } else {
-      return new SuccessModel(resData);
-    }
+    const result = getDetail(id);
+    return result.then(res => {
+      return res ? new SuccessModel(res) : new ErrorModel('获取博客详情失败！');
+    })
   }
   if (method === 'POST' && req.path === '/api/blog/add') {
     const { title, content } = req.body;
-    const resData = addBlog({ title, content });
-    if (!resData) {
-      return new ErrorModel('新增博客失败！请检查参数');
-    } else {
-      return new SuccessModel(resData);
+    const author = 'BabyChin'//需要登录之后获取，先用假数据
+    if (title && content && author) {
+      const result = addBlog({ title, content, author });
+      return result.then(res => {
+        return res ? new SuccessModel(res) : new ErrorModel('新增博客失败！');
+      }).catch(err => {
+        return new ErrorModel('新增博客失败！')
+      })
     }
+    /* else {
+      if (!title) {
+        return () => {
+          return new ErrorModel('标题不能为空！');
+        }
+      }
+      if (!content) {
+        return () => {
+          return new ErrorModel('内容不能为空！');
+        }
+      }
+      if (!author) {
+        return () => {
+          return new ErrorModel('作者不能为空！');
+        }
+      }
+    } */
   }
   if (method === 'POST' && req.path === '/api/blog/update') {
-    const { id, title, content } = req.body;
-    const resData = updateBlog({ id, title, content });
-    if (!resData) {
-      return new ErrorModel('更新博客失败！请检查参数');
-    } else {
-      return new SuccessModel(resData);
-    }
+    const { id, title, content, author } = req.body;
+    const result = updateBlog({ id, title, content, author });
+    return result.then(res => {
+      return res ? new SuccessModel(res) : new ErrorModel('更新博客失败！');
+    })
   }
   if (method === 'POST' && req.path === '/api/blog/del') {
-    const resData = delBlog(req.body.id);
-    if (!resData) {
-      return new ErrorModel('id不能为空！');
-    } else {
-      return new SuccessModel(resData);
-    }
+    // 先查是否已经删除    
+    const result = getDetail(req.body.id, 0);
+    return result.then(res => {
+      if (!res) {
+        return new ErrorModel('数据不存在了！');
+      } else {
+        const author = 'BabyChin'//需要登录之后获取，先用假数据
+        const result = delBlog(req.body.id, author);
+        return result.then(res => {
+          return res ? new SuccessModel(res) : new ErrorModel('删除博客失败！');
+        })
+      }
+    })
+
+
   }
 };
 
