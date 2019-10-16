@@ -1,3 +1,5 @@
+const { exec } = require('../db/mysql')
+
 // 登录
 const login = (data) => {
   if (data.userName === 'BabyChin' && data.password === '123456') {
@@ -18,7 +20,8 @@ const logout = (data) => {
 
 // 获取用户信息
 const getUserInfo = (id) => {
-  if (id) {
+  return exec(`select * from users where id=${id}`)
+  /* if (id) {
     return {
       name: '覃华',
       age: 18,
@@ -27,7 +30,7 @@ const getUserInfo = (id) => {
     };
   } else {
     return false;
-  }
+  } */
 };
 
 module.exports = {

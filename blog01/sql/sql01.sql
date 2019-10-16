@@ -43,3 +43,5 @@
 -- insert into users (username,password,realname) values('qinhua','123456','覃华');
 
 -- select * from users;
+
+-- ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '123456';

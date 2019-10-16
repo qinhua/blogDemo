@@ -8,12 +8,12 @@ const handleBlogRouter = (req, res) => {
   if (method === 'GET' && req.path === '/api/blog/list') {
     const author = req.query.author || '';
     const keyword = req.query.keyword || '';
-    const resData = getList(author, keyword);
-    if (!resData) {
-      return new ErrorModel('获取博客列表失败！');
-    } else {
-      return new SuccessModel(resData);
-    }
+    const result = getList(author, keyword);
+    return result.then(res => {
+      return new SuccessModel(res);
+    }).catch(err => {
+      return new ErrorModel(err || '获取博客列表失败！');
+    })
   }
   if (method === 'GET' && req.path === '/api/blog/detail') {
     const resData = getDetail(id);

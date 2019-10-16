@@ -16,12 +16,12 @@ const handleUserRouter = (req, res) => {
     return new SuccessModel(logout());
   }
   if (method === 'GET' && req.path === '/api/user/getUserInfo') {
-    const resData = getUserInfo(req.query.userId);
-    if (resData) {
-      return new SuccessModel(resData);
-    } else {
-      return new ErrorModel('获取用户信息失败！');
-    }
+    const result = getUserInfo(req.query.userId);
+    return result.then(res => {
+      return new SuccessModel(res);
+    }).catch(err => {
+      return new ErrorModel(err || '获取用户信息失败！');
+    })
   }
 };
 

@@ -1,6 +1,18 @@
+const { exec } = require('../db/mysql')
+
 // 获取博客列表
 const getList = (author, keyword) => {
-  return [
+  let sql = `select * from blogs where 1=1 `
+  if (author) {
+    sql += `and author='${author}' `
+  }
+  if (keyword) {
+    sql += `and title like '%${keyword}%' `
+  }
+  sql += `order by id desc;`
+  return exec(sql)
+  
+  /* return [
     {
       id: 1,
       title: '文章一',
@@ -22,7 +34,7 @@ const getList = (author, keyword) => {
       author: '刘小二',
       createTime: 1570962664888
     }
-  ];
+  ]; */
 };
 
 // 获取博客详情
