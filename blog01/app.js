@@ -32,6 +32,16 @@ const serverHandle = (req, res) => {
   // 解析query
   req.query = queryString.parse(url.split('?')[1]);
 
+  // 解析cookie
+  req.cookie = {};
+  if (req.headers.cookie) {
+    let cookies = req.headers.cookie.split(';');
+    cookies.map((cur) => {
+      let tmp = cur.split('=');
+      req.cookie[tmp[0].trim()] = tmp[1] ? tmp[1].trim() : '';
+    });
+  }
+
 
   // 设置返回格式
   res.setHeader('Content-type', 'application/json');
@@ -42,18 +52,18 @@ const serverHandle = (req, res) => {
     // 处理博客路由
     const blogData = handleBlogRouter(req, res);
     if (blogData) {
-      blogData.then(rs => {
+      blogData.then((rs) => {
         res.end(JSON.stringify(rs));
-      })
+      });
       return;
     }
 
     // 处理用户路由
     const userData = handleUserRouter(req, res);
     if (userData) {
-      userData.then(rs => {
+      userData.then((rs) => {
         res.end(JSON.stringify(rs));
-      })
+      });
       return;
     }
 
@@ -62,5 +72,5 @@ const serverHandle = (req, res) => {
     res.write('404，不存在的接口');
     res.end();
   });
-}
+};
 module.exports = serverHandle;
