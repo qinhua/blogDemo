@@ -1,9 +1,6 @@
 const { register, login, logout, getUserInfo } = require('../controller/user');
 const { SuccessModel, ErrorModel } = require('../model/resModel');
-const getExpiredTime = () => {
-  let now = new Date();
-  return new Date(now.setTime(now.getTime() + 24 * 60 * 60 * 1000)).toGMTString();
-};
+const { getExpiredTime } = require('../utils/index');
 
 const handleUserRouter = (req, res) => {
   const method = req.method;
@@ -18,9 +15,9 @@ const handleUserRouter = (req, res) => {
 
 
   if (method === 'GET' && req.path === '/api/user/checkLogin') {
-    const { username } = req.cookie;
+    const { username } = req.session;    
     if (username) {
-      return Promise.resolve(new SuccessModel({ username, message: '已登录' }));
+      return Promise.resolve(new SuccessModel({ session: req.session, message: '已登录' }));
     }
     return Promise.resolve(new ErrorModel('未登录！'));
   }
@@ -28,16 +25,23 @@ const handleUserRouter = (req, res) => {
 
   if (method === 'GET' && req.path === '/api/user/login') {
     const { username, password } = req.query;
-    res.setHeader('SET-Cookie', `username=${username};path=/;httpOnly;expires=${getExpiredTime()};`);
+    // res.setHeader('SET-Cookie', `userId=${username};path=/;httpOnly;expires=${getExpiredTime()};`);
     const result = login({ username, password });
     return result.then((res) => {
-      return res.username ? new SuccessModel(res) : new ErrorModel('登录失败！请检查用户名和密码');
+      if (res.username) {
+        req.session.username = res.username;
+        req.session.realname = res.realname;
+        console.log('session is', req.session);
+
+        return new SuccessModel(res);
+      }
+      return new ErrorModel('登录失败！请检查用户名和密码');
     });
   }
 
-  if (method === 'GET' && req.path === '/api/user/logout') {
+  if (method === 'POST' && req.path === '/api/user/logout') {
     // const { username } = req.query;
-    res.setHeader('Set-Cookie', 'username=;path=/;');
+    res.setHeader('Set-Cookie', 'userId=;path=/;');
     return Promise.resolve(new SuccessModel({ message: '已退出' }));
   }
 
