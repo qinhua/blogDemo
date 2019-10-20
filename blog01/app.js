@@ -1,12 +1,13 @@
 const queryString = require('querystring');
 const handleBlogRouter = require('./src/router/blog');
 const handleUserRouter = require('./src/router/user');
-const {getExpiredTime} =require('./src/utils/index');
+const { setKey, getKey, delKey } = require('./src/db/redis');
+const { getExpiredTime } = require('./src/utils/index');
 
 // session数据
 let SESSION_DATA = {};
 
-const getPostData = (req) => {
+const getPostData = (req) => {  
   return new Promise((resolve, reject) => {
     if (req.method !== 'POST') {
       resolve({});
@@ -48,27 +49,50 @@ const serverHandle = (req, res) => {
   }
 
   // 解析session
-  let needSetSession = false;
+  /* let needSetSession = false;
   let userId = req.cookie.userId;
   if (userId) {
-    if (!SESSION_DATA['userId']) {
-      SESSION_DATA['userId'] ='';
+    if (!SESSION_DATA[userId]) {
+      SESSION_DATA[userId] = {};
     }
   } else {
     needSetSession = true;
     userId = `${Date.now()}_${Math.random()}`;
-    SESSION_DATA['userId'] = userId;
-  }  
-  req.session = SESSION_DATA;
+    SESSION_DATA[userId] = {};
+  }
+  req.session = SESSION_DATA[userId]; */
 
-
+  // 解析session (Redis方式)
+  let needSetSession = false;
+  let userId = req.cookie.userId;
+  if (!userId) {
+    needSetSession = true;
+    userId = `${Date.now()}_${Math.random()}`;
+    // 初始化 redis 中的session值
+    setKey('userId', {});
+  }
+  // 获取session
+  req.sessionId = userId;
+  getKey(req.sessionId).then((sessionData) => {    
+    if (sessionData === null) {
+      // 初始化 redis 中的session值
+      setKey(req.sessionId, {});
+      // 初始化 session
+      req.session = {};
+    } else {
+      req.session = sessionData;
+    }
+    
+    // 处理 postdata    
+    return getPostData(req);
+  });
 
   // 设置返回格式
   res.setHeader('Content-type', 'application/json');
 
 
   getPostData(req).then((resData) => {
-    req.body = resData;
+    req.body = resData;    
     // 处理博客路由
     const blogData = handleBlogRouter(req, res);
     if (blogData) {
@@ -81,6 +105,7 @@ const serverHandle = (req, res) => {
 
     // 处理用户路由
     const userData = handleUserRouter(req, res);
+    
     if (userData) {
       userData.then((rs) => {
         needSetSession ? res.setHeader('SET-Cookie', `userId=${userId};path=/;httpOnly;expires=${getExpiredTime()};`) : null;

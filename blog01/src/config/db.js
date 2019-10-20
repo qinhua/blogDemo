@@ -2,6 +2,7 @@ const env = process.env.NODE_ENV; //环境参数
 
 // 配置
 let MYSQL_CONF;
+let REDIS_CONF;
 
 // 开发环境
 if (env === 'dev') {
@@ -11,7 +12,11 @@ if (env === 'dev') {
     password: '123456',
     port: 3399,
     database: 'myblog',
-    multipleStatements :true//允许执行多条sql
+    multipleStatements: true//允许执行多条sql
+  };
+  REDIS_CONF = {
+    host: 'localhost',
+    port: 6379
   };
 }
 
@@ -23,8 +28,12 @@ if (env === 'production') {
     password: '123456',
     port: 3399,
     database: 'myblog',
-    multipleStatements :true//允许执行多条sql
+    multipleStatements: true//允许执行多条sql
+  };
+  REDIS_CONF = {
+    host: 'localhost',
+    port: 6379
   };
 }
 
-module.exports = { MYSQL_CONF };
+module.exports = { MYSQL_CONF, REDIS_CONF };

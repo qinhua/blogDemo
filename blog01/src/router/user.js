@@ -1,5 +1,6 @@
 const { register, login, logout, getUserInfo } = require('../controller/user');
 const { SuccessModel, ErrorModel } = require('../model/resModel');
+const { setKey, getKey, delKey } = require('../db/redis');
 const { getExpiredTime } = require('../utils/index');
 
 const handleUserRouter = (req, res) => {
@@ -15,8 +16,9 @@ const handleUserRouter = (req, res) => {
 
 
   if (method === 'GET' && req.path === '/api/user/checkLogin') {
-    const { username } = req.session;    
-    if (username) {
+    // const { username } = req.session;    
+    // if (username) {
+    if (req.session && req.session.username) {
       return Promise.resolve(new SuccessModel({ session: req.session, message: '已登录' }));
     }
     return Promise.resolve(new ErrorModel('未登录！'));
@@ -29,9 +31,12 @@ const handleUserRouter = (req, res) => {
     const result = login({ username, password });
     return result.then((res) => {
       if (res.username) {
+        // 设置 session
         req.session.username = res.username;
         req.session.realname = res.realname;
         console.log('session is', req.session);
+        // 同步到 redis中
+        setKey(req.sessionId, req.session);
 
         return new SuccessModel(res);
       }
