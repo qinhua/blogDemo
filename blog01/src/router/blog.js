@@ -1,18 +1,36 @@
 const { getList, getDetail, addBlog, updateBlog, delBlog } = require('../controller/blog');
+const { getKey } = require('../db/redis');
 const { SuccessModel, ErrorModel } = require('../model/resModel');
+
+const loginCheck = (req) => {
+  return getKey(req.sessionId).then((rs) => {
+    if (!rs || !rs.username) {
+      return Promise.reject(new ErrorModel('请先登录！'));
+    }
+  });
+};
 
 const handleBlogRouter = (req, res) => {
   const method = req.method;
   const id = req.query.id || '';
 
   if (method === 'GET' && req.path === '/api/blog/list') {
-    const author = req.query.author || '';
-    const keyword = req.query.keyword || '';
-    const result = getList(author, keyword);
-    return result.then((res) => {
-      return new SuccessModel(res);
-    }).catch((err) => {
-      return new ErrorModel(err || '获取博客列表失败！');
+    /* if (loginCheck(req)) {
+      return loginCheck;
+    } */
+    return getKey(req.sessionId).then((rs) => {
+      if (!rs || !rs.username) {
+        return new ErrorModel('请先登录！');
+      } else {
+        const author = req.query.author || '';
+        const keyword = req.query.keyword || '';
+        const result = getList(author, keyword);
+        return result.then((res) => {
+          return new SuccessModel(res);
+        }).catch((err) => {
+          return new ErrorModel(err || '获取博客列表失败！');
+        });
+      }
     });
   }
   if (method === 'GET' && req.path === '/api/blog/detail') {

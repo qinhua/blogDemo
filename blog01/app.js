@@ -5,7 +5,7 @@ const { setKey, getKey, delKey } = require('./src/db/redis');
 const { getExpiredTime } = require('./src/utils/index');
 
 // session数据
-let SESSION_DATA = {};
+// let SESSION_DATA = {};
 
 const getPostData = (req) => {
   return new Promise((resolve, reject) => {
@@ -95,21 +95,21 @@ const serverHandle = (req, res) => {
 
   getPostData(req).then((resData) => {
     req.body = resData;
-    // 处理博客路由
-    const blogData = handleBlogRouter(req, res);
-    if (blogData) {
-      blogData.then((rs) => {
-        needSetSession ? res.setHeader('SET-Cookie', `userId=${userId};path=/;httpOnly;expires=${getExpiredTime()};`) : null;
-        res.end(JSON.stringify(rs));
-      });
-      return;
-    }
 
     // 处理用户路由
     const userData = handleUserRouter(req, res);
 
     if (userData) {
       userData.then((rs) => {
+        needSetSession ? res.setHeader('SET-Cookie', `userId=${userId};path=/;httpOnly;expires=${getExpiredTime()};`) : null;
+        res.end(JSON.stringify(rs));
+      });
+      return;
+    }
+    // 处理博客路由
+    const blogData = handleBlogRouter(req, res);
+    if (blogData) {
+      blogData.then((rs) => {
         needSetSession ? res.setHeader('SET-Cookie', `userId=${userId};path=/;httpOnly;expires=${getExpiredTime()};`) : null;
         res.end(JSON.stringify(rs));
       });
