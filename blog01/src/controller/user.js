@@ -1,20 +1,19 @@
 const { exec } = require('../db/mysql');
 
 
+// 检查是否注册过
+const checkRegist = (data) => {
+  return exec(`select * from users where username='${data}'`).then((rows)=>{
+    return rows[0];
+  });
+};
+
 // 注册
 const register = (data) => {
   return exec(`insert into users (username,password,realname,createTime) values ('${data.username}','${data.password}','${data.realname}',${Date.now()})`).then((insertData) => {
     return insertData.insertId;
   });
 };
-
-
-// 检查登录
-/* const checkLogin = (data) => {
-  return exec(`insert into users (username,password,realname,createTime) values ('${data.username}','${data.password}','${data.realname}',${Date.now()})`).then((insertData) => {
-    return insertData.insertId;
-  });
-}; */
 
 // 登录
 const login = (data) => {
@@ -42,6 +41,7 @@ const getUserInfo = (id) => {
 };
 
 module.exports = {
+  checkRegist,
   register,
   login,
   logout,

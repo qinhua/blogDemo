@@ -10,9 +10,7 @@ connection.connect();
 // 统一执行 sql 语句
 const exec = (sql) => {
   return new Promise((resolve, reject) => {
-    connection.query(sql, (err, res) => {
-      console.log(res);
-        
+    connection.query(sql, (err, res) => {        
       if (err) {
         reject(err);
         return;

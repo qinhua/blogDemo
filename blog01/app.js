@@ -7,7 +7,7 @@ const { getExpiredTime } = require('./src/utils/index');
 // session数据
 let SESSION_DATA = {};
 
-const getPostData = (req) => {  
+const getPostData = (req) => {
   return new Promise((resolve, reject) => {
     if (req.method !== 'POST') {
       resolve({});
@@ -69,12 +69,14 @@ const serverHandle = (req, res) => {
     needSetSession = true;
     userId = `${Date.now()}_${Math.random()}`;
     // 初始化 redis 中的session值
-    setKey('userId', {});
+    setKey(userId, {});
+    // 初始化 session
+    req.session = {};
   }
   // 获取session
   req.sessionId = userId;
-  getKey(req.sessionId).then((sessionData) => {    
-    if (sessionData === null) {
+  getKey(req.sessionId).then((sessionData) => {
+    if (sessionData === null || sessionData.username === undefined) {
       // 初始化 redis 中的session值
       setKey(req.sessionId, {});
       // 初始化 session
@@ -82,7 +84,7 @@ const serverHandle = (req, res) => {
     } else {
       req.session = sessionData;
     }
-    
+
     // 处理 postdata    
     return getPostData(req);
   });
@@ -92,7 +94,7 @@ const serverHandle = (req, res) => {
 
 
   getPostData(req).then((resData) => {
-    req.body = resData;    
+    req.body = resData;
     // 处理博客路由
     const blogData = handleBlogRouter(req, res);
     if (blogData) {
@@ -105,7 +107,7 @@ const serverHandle = (req, res) => {
 
     // 处理用户路由
     const userData = handleUserRouter(req, res);
-    
+
     if (userData) {
       userData.then((rs) => {
         needSetSession ? res.setHeader('SET-Cookie', `userId=${userId};path=/;httpOnly;expires=${getExpiredTime()};`) : null;
