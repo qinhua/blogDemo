@@ -46,7 +46,7 @@ const handleUserRouter = (req, res) => {
     });
   }
 
-  if (method === 'GET' && req.path === '/api/user/logout') {
+  if (method === 'POST' && req.path === '/api/user/logout') {
     res.setHeader('Set-Cookie', 'userId=;path=/;');
     return delKey(req.sessionId).then((rs) => {
       return Promise.resolve(rs ? new SuccessModel({ message: '已退出' }) : new ErrorModel('退出失败！'));

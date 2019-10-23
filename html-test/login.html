@@ -5,13 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>登录</title>
+    <style>
+        .f-box {
+            width: 222px;
+            padding: 20px;
+        }
+        .f-label {
+            display: block;
+            margin-bottom: 14px;
+        }
+        .f-label input {
+            width: 200px;
+            height: 28px;
+            margin-top: 5px;
+            padding: 0 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        #btnLogin {
+            display: block;
+            width: 100%;
+            height: 34px;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        <label>
+    <div class="f-box">
+        <label class="f-label">
             用户名 <input type="text" id="textUsername"/>
         </label>
-        <label>
+        <label class="f-label">
             密码 <input type="password" id="textPassword"/>
         </label>
         <button id="btnLogin">登录</button>
@@ -38,7 +61,7 @@
                 password
             }
             post(url, data).then(res => {
-                if (res.errno === 0) {
+                if (res.errCode === 0) {
                     // 登录成功
                     location.href = './admin.html'
                 } else {

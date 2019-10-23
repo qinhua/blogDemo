@@ -87,8 +87,8 @@
 
         // 加载数据
         get(url).then(res => {
-            if (res.errno !== 0) {
-                alert('数据错误')
+            if (res.errCode !== 0) {
+                alert('列表获取失败！')
                 return
             }
 
@@ -125,10 +125,10 @@
             }
 
             if (confirm('确定删除？')) {
-                const url = '/api/blog/del?id=' + $target.attr('data-id')
-                post(url).then(res => {
-                    if (res.errno !== 0) {
-                        alert('操作错误')
+                const url = '/api/blog/del'
+                post(url,{id:$target.attr('data-id')}).then(res => {
+                    if (res.errCode !== 0) {
+                        alert('删除失败！')
                         return
                     }
                     location.href = location.href

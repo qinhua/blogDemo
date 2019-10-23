@@ -79,7 +79,7 @@
         const urlParams = getUrlParams()
         const url = '/api/blog/detail?id=' + urlParams.id
         get(url).then(res => {
-            if (res.errno !== 0) {
+            if (res.errCode !== 0) {
                 alert('操作错误')
                 return
             }
@@ -98,13 +98,14 @@
             const title = $textTitle.val()
             const content = $textContent.val()
 
-            const url = '/api/blog/update?id=' + id
+            const url = '/api/blog/update'
             const data = {
+                id,
                 title,
                 content
             }
             post(url, data).then(res => {
-                if (res.errno !== 0) {
+                if (res.errCode !== 0) {
                     alert('操作错误')
                     return
                 }

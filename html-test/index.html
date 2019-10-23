@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,28 +11,91 @@
             margin: 0 20px;
             line-height: 1;
         }
+
         a {
             text-decoration-line: none;
+        }
+
+        .title-con {
+            overflow: hidden;
+        }
+
+        .title-con h1 {
+            float: left;
+        }
+
+        .user-info {
+            float: right;
+        }
+
+        .user-info li {
+            list-style: none;
+            float: left;
+            margin-left: 20px;
+            font-size: 14px;
+        }
+
+        .username {
+            display: none;
+            color: orangered;
+        }
+
+        .login{
+            cursor: pointer;
+            color: #0071fd;
+        }
+
+        .quit{
+            display: none;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .login:hover,.quit:hover {
+            text-decoration: underline;
+        }
+
+        .user-info.online .username,.user-info.online .quit{
+            display: block;
+        }
+        
+        .user-info.online .login{
+            display: none;
         }
 
         .title-wrapper {
             padding: 15px 0;
             border-top: 1px solid #ccc;
         }
+
         .title-wrapper .title {
             font-size: 20px;
             font-weight: bold;
         }
+
         .title-wrapper .info-wrapper span,
         .title-wrapper .info-wrapper a {
             font-size: 14px;
             color: #999;
         }
-
+        .no-data{
+            padding: 20px 0;
+            text-align: center;
+            font-size: 14px;
+            color: #999;
+        }
     </style>
 </head>
+
 <body>
-    <h1>博客首页</h1>
+    <div class="title-con">
+        <h1>博客首页</h1>
+        <ol class="user-info">
+            <li class="username"></li>
+            <li class="quit">退出登录</li>
+            <li class="login">登录</li>
+        </ol>
+    </div>
     <div id="blog-container"></div>
 
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
@@ -41,6 +105,16 @@
         // 发送 get 请求
         function get(url) {
             return $.get(url)
+        }
+
+        // 发送 post 请求
+        function post(url, data = {}) {
+            return $.ajax({
+                type: 'post',
+                url,
+                data: JSON.stringify(data),
+                contentType: "application/json",
+            })
         }
 
         // 显示格式化的时间
@@ -62,6 +136,34 @@
             return result
         }
 
+
+        // 检查登录
+        get('/api/user/checkLogin').then((res) => {
+            if (res.errCode !== 0) {
+                // alert('请先登录！')
+                // location.href = '/login.html'
+                return
+            }
+            $('.username').text(res.data.session.username);
+            $('.user-info').addClass('online')
+        })
+
+        // 登录
+        $('.login').on('click',function(){
+            location.href = '/login.html'
+        })
+        
+        // 退出登录
+        $('.quit').on('click',function(){
+            post('/api/user/logout').then((res) => {
+                if (res.errCode !== 0) {
+                    alert('退出失败！')
+                }
+                $('.user-info').removeClass('online')
+                $('.username').text('');
+            })
+        })
+
         // 获取 dom 元素
         const $container = $('#blog-container')
 
@@ -72,15 +174,16 @@
             url += '?author=' + urlParams.author
         }
 
-        // 加载数据
         get(url).then((res) => {
-            if (res.errno !== 0) {
-                alert('数据错误')
+            if (res.errCode !== 0) {
+                // alert('博客列表获取失败')
+                $container.html('<p class="no-data">暂无数据</p>')
                 return
             }
 
             // 遍历博客列表，并显示
             const data = res.data || []
+            $container.html('')
             data.forEach(item => {
                 $container.append($(`
                     <div class="title-wrapper">
@@ -99,4 +202,5 @@
         })
     </script>
 </body>
+
 </html>

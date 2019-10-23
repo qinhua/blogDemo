@@ -69,7 +69,8 @@ const handleBlogRouter = (req, res) => {
     } */
   }
   if (method === 'POST' && req.path === '/api/blog/update') {
-    const { id, title, content, author } = req.body;
+    const { id, title, content } = req.body;
+    const author = 'BabyChin';//需要登录之后获取，先用假数据
     const result = updateBlog({ id, title, content, author });
     return result.then((res) => {
       return res ? new SuccessModel(res) : new ErrorModel('更新博客失败！');
@@ -78,8 +79,8 @@ const handleBlogRouter = (req, res) => {
   if (method === 'POST' && req.path === '/api/blog/del') {
     // 先查是否已经删除    
     const result = getDetail(req.body.id, 0);
-    return result.then((res) => {
-      if (!res) {
+    return result.then((rs) => {
+      if (!rs) {
         return new ErrorModel('数据不存在了！');
       } else {
         const author = 'BabyChin';//需要登录之后获取，先用假数据
