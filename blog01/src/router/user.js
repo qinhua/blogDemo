@@ -27,9 +27,8 @@ const handleUserRouter = (req, res) => {
     });
   }
 
-
-  if (method === 'GET' && req.path === '/api/user/login') {
-    const { username, password } = req.query;
+  if (method === 'POST' && req.path === '/api/user/login') {
+    const { username, password } = req.body;
     // res.setHeader('SET-Cookie', `userId=${username};path=/;httpOnly;expires=${getExpiredTime()};`);
     const result = login({ username, password });
     return result.then((res) => {

@@ -3,6 +3,7 @@ const handleBlogRouter = require('./src/router/blog');
 const handleUserRouter = require('./src/router/user');
 const { setKey, getKey, delKey } = require('./src/db/redis');
 const { getExpiredTime } = require('./src/utils/index');
+const { access } = require('./src/utils/log');
 
 // session数据
 // let SESSION_DATA = {};
@@ -31,6 +32,8 @@ const getPostData = (req) => {
   });
 };
 const serverHandle = (req, res) => {
+  // access(`${req.method} -- ${req.url} -- ${req.headers['user-agent']} -- ${Date.now()}`);
+
   // 获取path
   const url = req.url;
   req.path = url.split('?')[0];
