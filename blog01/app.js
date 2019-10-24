@@ -3,7 +3,7 @@ const handleBlogRouter = require('./src/router/blog');
 const handleUserRouter = require('./src/router/user');
 const { setKey, getKey } = require('./src/db/redis');
 const { getExpiredTime } = require('./src/utils/index');
-const { access } = require('./src/utils/log');
+const { accessLog } = require('./src/utils/log');
 
 // session数据
 // let SESSION_DATA = {};
@@ -32,9 +32,7 @@ const getPostData = (req) => {
   });
 };
 const serverHandle = (req, res) => {
-  // if (process.env.NODE_ENV === 'production') {
-  access(`${req.method} -- ${req.url} -- ${req.headers['user-agent']} -- ${Date.now()}`);
-  // }
+  accessLog(`[${new Date().toLocaleString()}] ${req.method} -- ${req.url} -- ${req.headers['user-agent']}`);
 
   // 获取path
   const url = req.url;

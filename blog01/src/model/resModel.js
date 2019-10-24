@@ -1,3 +1,5 @@
+const { errorLog } = require('../utils/log');
+
 class BaseModel {
   constructor(data, message) {
     if (typeof data === 'string') {
@@ -19,12 +21,12 @@ class SuccessModel extends BaseModel {
     super(data, message);
     this.errCode = 0;
   }
-
 }
 
 class ErrorModel extends BaseModel {
   constructor(data, message) {
     super(data, message);
+    errorLog(`[${new Date().toLocaleString()}] ${data ? data.toString() : '未知错误'}`);
     this.errCode = -1;
   }
 }

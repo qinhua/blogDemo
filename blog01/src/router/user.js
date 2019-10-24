@@ -32,7 +32,7 @@ const handleUserRouter = (req, res) => {
     // res.setHeader('SET-Cookie', `userId=${username};path=/;httpOnly;expires=${getExpiredTime()};`);
     const result = login({ username, password });
     return result.then((res) => {
-      if (res.username) {
+      if (res && res.username) {
         // 设置 session
         req.session.username = res.username;
         req.session.realname = res.realname;

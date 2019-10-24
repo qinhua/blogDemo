@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +11,12 @@
             width: 222px;
             padding: 20px;
         }
+
         .f-label {
             display: block;
             margin-bottom: 14px;
         }
+
         .f-label input {
             width: 200px;
             height: 28px;
@@ -22,6 +25,7 @@
             border: 1px solid #ddd;
             border-radius: 3px;
         }
+
         #btnLogin {
             display: block;
             width: 100%;
@@ -29,19 +33,25 @@
         }
     </style>
 </head>
+
 <body>
     <div class="f-box">
         <label class="f-label">
-            用户名 <input type="text" id="textUsername"/>
+            用户名 <input type="text" id="textUsername" />
         </label>
         <label class="f-label">
-            密码 <input type="password" id="textPassword"/>
+            密码 <input type="password" id="textPassword" />
         </label>
         <button id="btnLogin">登录</button>
     </div>
-    
+
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
     <script>
+        // 发送 get 请求
+        function get(url) {
+            return $.get(url)
+        }
+
         // 发送 post 请求
         function post(url, data = {}) {
             return $.ajax({
@@ -52,6 +62,17 @@
             })
         }
 
+        // 检查登录
+        function checkLogin() {
+            get('/api/user/checkLogin').then((res) => {
+                if (res.errCode !== 0) {
+                    return
+                }
+                location.href = '/admin.html'
+            })
+        }
+        checkLogin();
+        
         $('#btnLogin').click(() => {
             const username = $('#textUsername').val()
             const password = $('#textPassword').val()
@@ -72,4 +93,5 @@
         })
     </script>
 </body>
+
 </html>

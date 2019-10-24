@@ -20,10 +20,6 @@ const setKey = (key, value, expires) => {
 };
 
 const getKey = (key) => {
-  /* if (!key) {
-    console.log('key不能为空');
-    return;
-  } */
   return new Promise((resolve, reject) => {
     redisClient.get(key, (err, val) => {
       if (err) {

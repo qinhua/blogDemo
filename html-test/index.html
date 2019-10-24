@@ -31,7 +31,7 @@
         .user-info li {
             list-style: none;
             float: left;
-            margin-left: 20px;
+            margin-left: 16px;
             font-size: 14px;
         }
 
@@ -69,7 +69,7 @@
         }
 
         .title-wrapper .title {
-            font-size: 20px;
+            font-size: 16px;
             font-weight: bold;
         }
 
@@ -96,12 +96,16 @@
             <li class="login">登录</li>
         </ol>
     </div>
-    <div id="blog-container"></div>
+    <div id="blog-container"><p class="no-data">暂无数据</p></div>
 
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.23.0/locale/zh-cn.js"></script>
-    <script>
+    <script>        
+        
+        // 获取 dom 元素
+        const $container = $('#blog-container')
+
         // 发送 get 请求
         function get(url) {
             return $.get(url)
@@ -136,18 +140,58 @@
             return result
         }
 
+         // 获取列表
+        function getList(){
+            let url = '/api/blog/list'
+            const urlParams = getUrlParams()
+            if (urlParams.author) {
+                url += '?author=' + urlParams.author
+            }
+
+            get(url).then((res) => {
+                if (res.errCode !== 0) {
+                    // alert('博客列表获取失败')
+                    $container.html('<p class="no-data">暂无数据</p>')
+                    return
+                }
+
+                // 遍历博客列表，并显示
+                const data = res.data || []
+                $container.html('')
+                data.forEach(item => {
+                    $container.append($(`
+                        <div class="title-wrapper">
+                            <p class="title">
+                            <a href="/detail.html?id=${item.id}" target="_blank">${item.title}</a>
+                            </p>
+                            <div class="info-wrapper">
+                                <span>
+                                    <a href="/index.html?author=${item.author}">${item.author}</a>
+                                </span>
+                                <span>${getFormatDate(item.createtime)}</span>
+                            </div>
+                        </div>
+                    `))
+                })
+            })    
+        }
 
         // 检查登录
-        get('/api/user/checkLogin').then((res) => {
-            if (res.errCode !== 0) {
-                // alert('请先登录！')
-                // location.href = '/login.html'
-                return
-            }
-            $('.username').text(res.data.session.username);
-            $('.user-info').addClass('online')
-        })
-
+        function checkLogin(){
+            get('/api/user/checkLogin').then((res) => {
+                if (res.errCode !== 0) {
+                    // alert('请先登录！')
+                    // location.href = '/login.html'
+                    return
+                }
+                $('.username').text(res.data.session.username);
+                $('.user-info').addClass('online')
+                getList()
+            })
+        }
+        
+        checkLogin();
+        
         // 登录
         $('.login').on('click',function(){
             location.href = '/login.html'
@@ -159,45 +203,9 @@
                 if (res.errCode !== 0) {
                     alert('退出失败！')
                 }
+                $('.username').text('')
                 $('.user-info').removeClass('online')
-                $('.username').text('');
-            })
-        })
-
-        // 获取 dom 元素
-        const $container = $('#blog-container')
-
-        // 拼接接口 url
-        let url = '/api/blog/list'
-        const urlParams = getUrlParams()
-        if (urlParams.author) {
-            url += '?author=' + urlParams.author
-        }
-
-        get(url).then((res) => {
-            if (res.errCode !== 0) {
-                // alert('博客列表获取失败')
-                $container.html('<p class="no-data">暂无数据</p>')
-                return
-            }
-
-            // 遍历博客列表，并显示
-            const data = res.data || []
-            $container.html('')
-            data.forEach(item => {
-                $container.append($(`
-                    <div class="title-wrapper">
-                        <p class="title">
-                        <a href="/detail.html?id=${item.id}" target="_blank">${item.title}</a>
-                        </p>
-                        <div class="info-wrapper">
-                            <span>
-                                <a href="/index.html?author=${item.author}">${item.author}</a>
-                            </span>
-                            <span>${getFormatDate(item.createtime)}</span>
-                        </div>
-                    </div>
-                `))
+                getList();
             })
         })
     </script>
