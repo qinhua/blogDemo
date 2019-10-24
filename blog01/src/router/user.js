@@ -28,7 +28,10 @@ const handleUserRouter = (req, res) => {
   }
 
   if (method === 'POST' && req.path === '/api/user/login') {
-    const { username, password } = req.body;
+    // const { username, password } = req.body;
+    // 预防sql注入
+    const username = escape(req.body.username);
+    const password = escape(req.body.password);
     // res.setHeader('SET-Cookie', `userId=${username};path=/;httpOnly;expires=${getExpiredTime()};`);
     const result = login({ username, password });
     return result.then((res) => {
