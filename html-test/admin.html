@@ -102,7 +102,7 @@
         // 加载数据
         get(url).then(res => {
             if (res.errCode !== 0) {
-                alert('列表获取失败！')
+                alert(res.message || '列表获取失败！')
                 return
             }
 

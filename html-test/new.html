@@ -61,7 +61,7 @@
             const title = $textTitle.val().trim()
             const content = $textContent.val().trim()
             if (title === '' || content === '') {
-                alert('标题或内容不能为空')
+                alert(res.message || '标题或内容不能为空')
                 return
             }
 
@@ -72,7 +72,7 @@
             }
             post(url, data).then(res => {
                 if (res.errCode !== 0) {
-                    alert('操作错误')
+                    alert(res.message || '新增失败')
                     return
                 }
                 alert('创建成功')

@@ -86,7 +86,7 @@
         const url = '/api/blog/detail?id=' + urlParams.id
         get(url).then(res => {
             if (res.errCode !== 0) {
-                alert('获取详情失败！')
+                alert(res.message || '获取详情失败！')
                 return
             }
 
@@ -112,7 +112,7 @@
             }
             post(url, data).then(res => {
                 if (res.errCode !== 0) {
-                    alert('更新失败')
+                    alert(res.message || '更新失败')
                     return
                 }
                 // alert('更新成功')

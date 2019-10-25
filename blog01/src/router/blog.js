@@ -20,7 +20,7 @@ const handleBlogRouter = (req, res) => {
     } */
     return getKey(req.sessionId).then((rs) => {
       if (!rs || !rs.username) {
-        return new ErrorModel('请先登录！');
+        return Promise.resolve(new ErrorModel('请先登录！'));
       } else {
         const author = req.query.author || '';
         const keyword = req.query.keyword || '';
@@ -50,23 +50,23 @@ const handleBlogRouter = (req, res) => {
         return new ErrorModel('新增博客失败！');
       });
     }
-    /* else {
-      if (!title) {
-        return () => {
-          return new ErrorModel('标题不能为空！');
-        }
+  /* else {
+    if (!title) {
+      return () => {
+        return new ErrorModel('标题不能为空！');
       }
-      if (!content) {
-        return () => {
-          return new ErrorModel('内容不能为空！');
-        }
+    }
+    if (!content) {
+      return () => {
+        return new ErrorModel('内容不能为空！');
       }
-      if (!author) {
-        return () => {
-          return new ErrorModel('作者不能为空！');
-        }
+    }
+    if (!author) {
+      return () => {
+        return new ErrorModel('作者不能为空！');
       }
-    } */
+    }
+  } */
   }
   if (method === 'POST' && req.path === '/api/blog/update') {
     const { id, title, content } = req.body;
@@ -77,7 +77,7 @@ const handleBlogRouter = (req, res) => {
     });
   }
   if (method === 'POST' && req.path === '/api/blog/del') {
-    // 先查是否已经删除    
+  // 先查是否已经删除    
     const result = getDetail(req.body.id, 0);
     return result.then((rs) => {
       if (!rs) {
