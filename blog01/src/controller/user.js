@@ -1,9 +1,15 @@
 const { exec } = require('../db/mysql');
 
-
 // 检查是否注册过
 const checkRegist = (data) => {
-  return exec(`select * from users where username='${data}'`).then((rows)=>{
+  return exec(`select username from users where username='${data}'`).then((rows) => {
+    return rows[0];
+  });
+};
+
+// 检查密码是否匹配
+const checkPassword = (data) => {
+  return exec(`select username from users where username='${data.username}' and  password='${data.password}'`).then((rows) => {
     return rows[0];
   });
 };
@@ -26,6 +32,14 @@ const login = (data) => {
   });
 };
 
+// 更新密码
+const updatePassword = (data) => {
+  let sql = `update users set password='${data.password}' where username='${data.username}';`;
+  return exec(sql).then((updateData) => {
+    return updateData.affectedRows > 0;
+  });
+};
+
 // 退出
 const logout = (data) => {
   return exec(`select * from users where username='${data.username}' and password='${data.password}'`).then((rows) => {
@@ -45,5 +59,7 @@ module.exports = {
   register,
   login,
   logout,
+  checkPassword,
+  updatePassword,
   getUserInfo
 };

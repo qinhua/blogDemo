@@ -11,75 +11,85 @@
             margin: 0 20px;
             line-height: 1;
         }
-
+        
         a {
             text-decoration-line: none;
         }
-
+        
         .title-con {
             overflow: hidden;
         }
-
+        
         .title-con h1 {
             float: left;
         }
-
+        
         .user-info {
             float: right;
             margin-top: 30px;
         }
-
+        
         .user-info li {
             list-style: none;
             float: left;
             margin-left: 16px;
             font-size: 14px;
         }
-
+        
         .username {
             display: none;
             color: orangered;
         }
-
-        .login{
+        
+        .login {
             cursor: pointer;
             color: #0071fd;
         }
-
-        .quit{
+        
+        .quit {
             display: none;
             cursor: pointer;
             color: #999;
         }
-
-        .login:hover,.quit:hover {
+        
+        .modify-pwd {
+            display: none;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .login:hover,
+        .quit:hover {
             text-decoration: underline;
         }
-
-        .user-info.online .username,.user-info.online .quit{
+        
+        .user-info.online .username,
+        .user-info.online .quit,
+        .user-info.online .modify-pwd {
             display: block;
         }
         
-        .user-info.online .login{
+        .user-info.online .login {
             display: none;
         }
-
+        
         .title-wrapper {
             padding: 15px 0;
             border-top: 1px solid #ccc;
         }
-
+        
         .title-wrapper .title {
             font-size: 16px;
             font-weight: bold;
         }
-
+        
         .title-wrapper .info-wrapper span,
         .title-wrapper .info-wrapper a {
             font-size: 14px;
             color: #999;
         }
-        .no-data{
+        
+        .no-data {
             padding: 20px 0;
             text-align: center;
             font-size: 14px;
@@ -93,17 +103,19 @@
         <h1>博客首页</h1>
         <ol class="user-info">
             <li class="username"></li>
+            <li class="modify-pwd">修改密码</li>
             <li class="quit">退出登录</li>
             <li class="login">登录</li>
         </ol>
     </div>
-    <div id="blog-container"><p class="no-data">暂无数据</p></div>
+    <div id="blog-container">
+        <p class="no-data">暂无数据</p>
+    </div>
 
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.23.0/locale/zh-cn.js"></script>
-    <script>        
-        
+    <script>
         // 获取 dom 元素
         const $container = $('#blog-container')
 
@@ -141,8 +153,8 @@
             return result
         }
 
-         // 获取列表
-        function getList(){
+        // 获取列表
+        function getList() {
             let url = '/api/blog/list'
             const urlParams = getUrlParams()
             if (urlParams.author) {
@@ -174,32 +186,37 @@
                         </div>
                     `))
                 })
-            })    
+            })
         }
 
         // 检查登录
-        function checkLogin(){
+        function checkLogin() {
             get('/api/user/checkLogin').then((res) => {
                 if (res.errCode !== 0) {
                     // alert('请先登录！')
                     // location.href = '/login.html'
                     return
                 }
-                $('.username').text(res.data.session.username);
+                $('.username').text(res.data.session.realname).attr('data-name', res.data.session.username);
                 $('.user-info').addClass('online')
                 getList()
             })
         }
-        
+
         checkLogin();
-        
+
         // 登录
-        $('.login').on('click',function(){
+        $('.login').on('click', function() {
             location.href = '/login.html'
         })
-        
+
+        // 修改密码
+        $('.modify-pwd').on('click', function() {
+            location.href = '/modify-pwd.html'
+        })
+
         // 退出登录
-        $('.quit').on('click',function(){
+        $('.quit').on('click', function() {
             post('/api/user/logout').then((res) => {
                 if (res.errCode !== 0) {
                     alert('退出失败！')

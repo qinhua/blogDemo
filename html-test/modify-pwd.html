@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>登录</title>
+    <title>修改密码</title>
     <style>
         .f-box {
             width: 222px;
@@ -26,7 +26,7 @@
             border-radius: 3px;
         }
         
-        #btnLogin {
+        #btnSubmit {
             display: block;
             width: 100%;
             height: 34px;
@@ -37,12 +37,15 @@
 <body>
     <div class="f-box">
         <label class="f-label">
-            用户名 <input type="text" id="textUsername" placeholder="请输入用户名" />
+            旧密码 <input type="password" id="oldPassword" placeholder="请输入旧密码"/>
         </label>
         <label class="f-label">
-            密码 <input type="password" id="textPassword" placeholder="请输入密码" />
+            新密码 <input type="password" id="password" placeholder="请输入新密码" />
         </label>
-        <button id="btnLogin">登录</button>
+        <label class="f-label">
+            确认密码 <input type="password" id="rPassword" placeholder="请再次输入新密码" />
+        </label>
+        <button id="btnSubmit">提交</button>
     </div>
 
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
@@ -71,35 +74,42 @@
                 location.href = '/admin.html'
             })
         }
-        checkLogin();
-
         var fn = function() {
-            const username = $('#textUsername').val().trim()
-            const password = $('#textPassword').val().trim()
-            if (!username) {
-                alert('用户名不能为空！')
+            const oldPassword = $('#oldPassword').val().trim()
+            const password = $('#password').val().trim()
+            const rPassword = $('#rPassword').val().trim()
+            if (!oldPassword) {
+                alert('旧密码不能为空！')
                 return false;
             }
             if (!password) {
-                alert('密码不能为空！')
+                alert('新密码不能为空！')
                 return false;
             }
-            const url = '/api/user/login'
+            if (!rPassword) {
+                alert('请再次输入新密码！')
+                return false;
+            }
+            if (password !== rPassword) {
+                alert('两次密码不一致！')
+                return false;
+            }
+            const url = '/api/user/modify-pwd'
             const data = {
-                username,
+                oldPassword,
                 password
             }
             post(url, data).then(res => {
                 if (res.errCode === 0) {
-                    // 登录成功
-                    location.href = './admin.html'
+                    // 修改成功
+                    location.href = './index.html'
                 } else {
                     // 登录失败
                     alert(res.message)
                 }
             })
         }
-        $('#btnLogin').click(() => {
+        $('#btnSubmit').click(() => {
             fn()
         })
         window.addEventListener('keydown', function(e) {

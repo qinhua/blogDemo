@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,25 +11,29 @@
             margin: 0 20px;
             line-height: 1;
         }
+        
         a {
             text-decoration-line: none;
         }
-
+        
         .title {
             font-size: 20px;
             font-weight: bold;
         }
+        
         .info-container span,
         .info-container a {
             font-size: 14px;
             color: #999;
         }
+        
         .content-wrapper {
             margin-top: 20px;
             border-top: 1px solid #ccc;
         }
     </style>
 </head>
+
 <body>
     <h1 id="title" class="title"></h1>
     <div id="info-container" class="info-container"></div>
@@ -64,6 +69,13 @@
             return result
         }
 
+        function entityToString(entity) {
+            var div = document.createElement('div')
+            div.innerHTML = entity
+            var res = div.innerText || div.textContent
+            return res
+        }
+
         // 获取 dom 元素
         const $title = $('#title')
         const $infoContainer = $('#info-container')
@@ -80,7 +92,7 @@
 
             // 显示数据
             const data = res.data || {}
-            $title.text(data.title)
+            $title.text(entityToString(data.title))
             $content.text(data.content)
             $infoContainer.append($(`
                 <span>
@@ -91,4 +103,5 @@
         })
     </script>
 </body>
+
 </html>
