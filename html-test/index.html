@@ -41,6 +41,12 @@
             color: orangered;
         }
         
+        .manage {
+            display: none;
+            cursor: pointer;
+            color: #1e9af5;
+        }
+        
         .login {
             cursor: pointer;
             color: #0071fd;
@@ -103,6 +109,7 @@
         <h1>博客首页</h1>
         <ol class="user-info">
             <li class="username"></li>
+            <li class="manage">管理博客</li>
             <li class="modify-pwd">修改密码</li>
             <li class="quit">退出登录</li>
             <li class="login">登录</li>
@@ -199,11 +206,17 @@
                 }
                 $('.username').text(res.data.session.realname).attr('data-name', res.data.session.username);
                 $('.user-info').addClass('online')
+                res.data.session.isAdmin === 1 ? $('.manage').show() : null
                 getList()
             })
         }
 
         checkLogin();
+
+        // 博客管理
+        $('.manage').on('click', function() {
+            location.href = '/admin.html'
+        })
 
         // 登录
         $('.login').on('click', function() {
@@ -223,6 +236,7 @@
                 }
                 $('.username').text('')
                 $('.user-info').removeClass('online')
+                $('.manage').hide()
                 getList();
             })
         })

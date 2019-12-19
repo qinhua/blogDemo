@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>登录</title>
+    <title>注册</title>
     <style>
         .f-box {
             width: 222px;
@@ -26,7 +26,7 @@
             border-radius: 3px;
         }
         
-        #btnLogin {
+        #btnRegist {
             display: block;
             width: 100%;
             height: 34px;
@@ -37,12 +37,15 @@
 <body>
     <div class="f-box">
         <label class="f-label">
-            用户名 <input type="text" id="textUsername" placeholder="请输入用户名" />
+            用户名 <input type="text" id="userName" placeholder="请输入用户名" />
         </label>
         <label class="f-label">
-            密码 <input type="password" id="textPassword" placeholder="请输入密码" />
+            真实姓名 <input type="text" id="realName" placeholder="请输入真实姓名" />
         </label>
-        <button id="btnLogin">登录</button>
+        <label class="f-label">
+            密码 <input type="password" id="password" placeholder="请输入密码" />
+        </label>
+        <button id="btnRegist">提交</button>
     </div>
 
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
@@ -62,44 +65,39 @@
             })
         }
 
-        // 检查登录
-        function checkLogin() {
-            get('/api/user/checkLogin').then((res) => {
-                if (res.errCode !== 0) {
-                    return
-                }
-                location.href = '/admin.html'
-            })
-        }
-        checkLogin();
-
         var fn = function() {
-            const username = $('#textUsername').val().trim()
-            const password = $('#textPassword').val().trim()
+            const username = $('#userName').val().trim()
+            const realname = $('#realName').val().trim()
+            const password = $('#password').val().trim()
             if (!username) {
                 alert('用户名不能为空！')
+                return false;
+            }
+            if (!realname) {
+                alert('真实姓名不能为空！')
                 return false;
             }
             if (!password) {
                 alert('密码不能为空！')
                 return false;
             }
-            const url = '/api/user/login'
+            const url = '/api/user/register'
             const data = {
                 username,
+                realname,
                 password
             }
             post(url, data).then(res => {
                 if (res.errCode === 0) {
-                    // 登录成功
-                    location.href = './index.html'
+                    // 注册成功
+                    location.href = './login.html'
                 } else {
-                    // 登录失败
+                    // 注册失败
                     alert(res.message)
                 }
             })
         }
-        $('#btnLogin').click(() => {
+        $('#btnRegist').click(() => {
             fn()
         })
         window.addEventListener('keydown', function(e) {
