@@ -23,7 +23,6 @@ const handleUserRouter = (req, res) => {
         });
     }
 
-
     /* 检查登录 */
     if (method === 'GET' && req.path === '/api/user/checkLogin') {
         return getKey(req.sessionId).then((rs) => {
