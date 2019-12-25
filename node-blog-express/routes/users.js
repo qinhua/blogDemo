@@ -2,8 +2,12 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.post('/login', function(req, res, next) {
+    const { username, password } = req.body
+    res.json({
+        code: 0,
+        msg: '登陆成功'
+    })
 });
 
 module.exports = router;
