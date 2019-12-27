@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "start": "npm run dev",
-        "dev": "cross-env NODE_ENV=dev supervisor ./bin/www"
+        "dev": "cross-env NODE_ENV=dev supervisor ./app.js"
     },
     "devDependencies": {
         "cross-env": "^5.2.0",
